@@ -60,7 +60,7 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-  div []
+  div [ style "height" "auto", style "width" "auto", style "text-align" "center" ]
     [ viewInput "text" "Name" model.name Name
     , viewInput "password" "Password" model.password Password
     , viewInput "password" "Re-enter Password" model.passwordAgain PasswordAgain
