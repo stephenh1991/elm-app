@@ -76,10 +76,10 @@ viewInput t p v toMsg =
 
 viewValidation : Model -> Html msg
 viewValidation model =
-  if not (model.password == model.passwordAgain) then div [ style "color" "red" ] [ text "Passwords do not match!" ]
-  else if not (String.length model.password >= 8) then div [ style "color" "red" ] [ text "Password complexity not met!" ]
+  if not (String.length model.password >= 8) then div [ style "color" "red" ] [ text "Password complexity not met!" ]
   else if not (String.any isDigit model.password) then div [ style "color" "red" ] [ text "Password complexity not met!" ]
   else if not (String.any isUpper model.password) then div [ style "color" "red" ] [ text "Password complexity not met!" ]
   else if not (String.any isLower model.password) then div [ style "color" "red" ] [ text "Password complexity not met!" ]
+  else if not (model.password == model.passwordAgain) then div [ style "color" "red" ] [ text "Passwords do not match!" ]
   else
     div [ style "color" "green" ] [ text "Ok!" ]
