@@ -1,16 +1,10 @@
 module Main exposing (..)
 
--- Press buttons to increment and decrement a counter.
---
--- Read how it works:
---   https://guide.elm-lang.org/architecture/buttons.html
---
-
-
 import Browser
-import Html exposing (Html, button, div, text)
-import Html.Events exposing (onClick)
+import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (onInput)
+import Char exposing (isDigit, isUpper, isLower)
 
 
 
@@ -25,12 +19,16 @@ main =
 -- MODEL
 
 
-type alias Model = Int
+type alias Model =
+  { name : String
+  , password : String
+  , passwordAgain : String
+  }
 
 
 init : Model
 init =
-  0
+  Model "" "" ""
 
 
 
@@ -38,26 +36,23 @@ init =
 
 
 type Msg
-  = Increment
-  | Decrement
-  | Reset
-  | AddTen
+  = Name String
+  | Password String
+  | PasswordAgain String
 
 
 update : Msg -> Model -> Model
 update msg model =
   case msg of
-    Increment ->
-      model + 1
+    Name name ->
+      { model | name = name }
 
-    Decrement ->
-      model - 1
+    Password password ->
+      { model | password = password }
 
-    Reset -> 
-      model - model
+    PasswordAgain password ->
+      { model | passwordAgain = password }
 
-    AddTen ->
-      model + 10
 
 
 -- VIEW
@@ -66,11 +61,25 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div []
-    [ button [ onClick Decrement ] [ text "-" ]
-    , div [] [ text (String.fromInt model) ]
-    , button [ onClick Increment ] [ text "+" ]
-    , div [] [ text "" ]
-    , button [ onClick Reset ] [ text "reset" ]
-    , div [] [ text "" ]
-    , button [ onClick AddTen ] [ text "+10" ]
+    [ viewInput "text" "Name" model.name Name
+    , viewInput "password" "Password" model.password Password
+    , viewInput "password" "Re-enter Password" model.passwordAgain PasswordAgain
+    , viewValidation model
+    , div [ style "color" "black" ] [ text "Password must be at least 8 characters long and contain 1 Upper, 1 Lower, 1 digit" ] 
     ]
+
+
+viewInput : String -> String -> String -> (String -> msg) -> Html msg
+viewInput t p v toMsg =
+  input [ type_ t, placeholder p, value v, onInput toMsg ] []
+
+
+viewValidation : Model -> Html msg
+viewValidation model =
+  if not (model.password == model.passwordAgain) then div [ style "color" "red" ] [ text "Passwords do not match!" ]
+  else if not (String.length model.password >= 8) then div [ style "color" "red" ] [ text "Password complexity not met!" ]
+  else if not (String.any isDigit model.password) then div [ style "color" "red" ] [ text "Password complexity not met!" ]
+  else if not (String.any isUpper model.password) then div [ style "color" "red" ] [ text "Password complexity not met!" ]
+  else if not (String.any isLower model.password) then div [ style "color" "red" ] [ text "Password complexity not met!" ]
+  else
+    div [ style "color" "green" ] [ text "Ok!" ]
